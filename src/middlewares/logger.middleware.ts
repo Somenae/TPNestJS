@@ -1,6 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { appendFile, appendFileSync, createWriteStream, existsSync, writeFileSync } from 'fs';
+import { appendFileSync, createWriteStream, existsSync } from 'fs';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
