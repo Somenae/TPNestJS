@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import { appendFile, appendFileSync, createWriteStream, existsSync, writeFileSync } from 'fs';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
@@ -9,6 +10,18 @@ export class LoggerMiddleware implements NestMiddleware {
     const url = req.originalUrl;
     
     console.log(`[${timestamp}] ${method} ${url}`);
+
+    let path: string = "log.txt";
+
+    if (!existsSync(path)) {
+      let stream = createWriteStream(path);
+      stream.on('open', () => {
+        stream.write(`[${timestamp}] ${method} ${url}`);
+        stream.close();
+      });
+    } else {
+      appendFileSync(path, `\n[${timestamp}] ${method} ${url}`);
+    }
     
     next();
   }
