@@ -23,9 +23,4 @@ export class LikesController {
   ) {
     return this.likesService.removeLike(req, postId);
   }
-
-  @Get()
-  findAll() {
-    return this.likesService.findAll();
-  }
 }

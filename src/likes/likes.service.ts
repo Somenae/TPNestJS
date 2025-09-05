@@ -70,22 +70,4 @@ export class LikesService {
             throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
         }
     }
-
-    async findAll() {
-        return await this.prisma.likes.findMany({
-            select: {
-                user: {
-                    select: {
-                        username: true,
-                    }
-                },
-                post: {
-                    select: {
-                        message: true,
-                        totalLikes: true,
-                    }
-                }
-            }
-        });
-    }
 }
