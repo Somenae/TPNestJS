@@ -35,6 +35,14 @@ export class LikesService {
                 }
             });
         } catch (error) {
+            await this.prisma.posts.update({
+                where: { id: postId },
+                data: {
+                    totalLikes: {
+                        decrement: 1
+                    }
+                }
+            });
             throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
         }
     }
@@ -74,6 +82,7 @@ export class LikesService {
                 post: {
                     select: {
                         message: true,
+                        totalLikes: true,
                     }
                 }
             }
