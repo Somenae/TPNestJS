@@ -36,7 +36,8 @@ model Posts {
   message       String
   userId        Int
   user          Users     @relation(fields: [userId], references: [id])
-  totalLikes    Int
+  totalLikes    Int       @default(0)
+  createdAt     DateTime  @default(now())
   likes         Likes[]
 }
 

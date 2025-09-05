@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Request } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -44,7 +44,8 @@ export class UsersService {
   }
 
   async findByUsername(username: string) {
-    /* Method used by validate user for auth
+    /* DO NOT USE TO RETURN PUBLIC DATA
+    Method used by validate user for auth
     Adding anything more breaks it
     Needs to add a separate method for user's profile consultation */
     return await this.prisma.users.findUnique({ 
