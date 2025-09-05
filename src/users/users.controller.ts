@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -20,11 +19,11 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':username')
-  findOne(
-    @Param('username') username: string
+  @Get('feed')
+  getFeed(
+    @Request() req: Request
   ) {
-    return this.usersService.findUser(username);
+    return this.usersService.getFeed(req);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -43,6 +42,14 @@ export class UsersController {
     @Param('username') username: string
   ) {
     return this.usersService.removeFollow(req, username);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(':username')
+  findOne(
+    @Param('username') username: string
+  ) {
+    return this.usersService.findUser(username);
   }
 
   @Patch(':id')

@@ -145,4 +145,26 @@ export class UsersService {
       }
     });
   }
+
+  async getFeed(req: Request) {
+    return await this.prisma.users.findUnique({
+      where: {
+        username: req['user'].username
+      },
+      select: {
+        following: {
+          select: {
+            username: true,
+            post: {
+              select: {
+                message: true,
+                totalLikes: true,
+                createdAt: true,
+              }
+            }
+          }
+        }
+      }
+    })
+  }
 }
