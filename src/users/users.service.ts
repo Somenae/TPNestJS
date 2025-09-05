@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Request } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -26,7 +26,7 @@ export class UsersService {
         id: true,
         username: true,
         email: true,
-        accountCreationDate: true,
+        createdAt: true,
       },
     });
   }
@@ -54,4 +54,13 @@ export class UsersService {
       }
     });
   }
+
+  async findProfile(req: Request) {
+    return await this.prisma.users.findUnique({ 
+      where: { 
+        username: req["user"].username 
+      }
+    });
+  }
+
 }
