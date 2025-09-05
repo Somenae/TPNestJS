@@ -19,9 +19,30 @@ export class UsersController {
       return this.usersService.findProfile(req);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get(':username')
+  findOne(
+    @Param('username') username: string
+  ) {
+    return this.usersService.findUser(username);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('follow/:username')
+  followUser(
+    @Request() req: Request,
+    @Param('username') username: string
+  ) {
+    return this.usersService.addFollow(req, username);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('unfollow/:username')
+  unfollowUser(
+    @Request() req: Request,
+    @Param('username') username: string
+  ) {
+    return this.usersService.removeFollow(req, username);
   }
 
   @Patch(':id')

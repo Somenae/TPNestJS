@@ -35,10 +35,6 @@ export class UsersService {
     return await this.prisma.users.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
@@ -48,9 +44,25 @@ export class UsersService {
   }
 
   async findByUsername(username: string) {
+    /* Method used by validate user for auth
+    Adding anything more breaks it
+    Needs to add a separate method for user's profile consultation */
     return await this.prisma.users.findUnique({ 
       where: { 
         username: username 
+      }
+    });
+  }
+
+  async findUser(username: string){
+    return await this.prisma.users.findUnique({ 
+      where: { 
+        username: username 
+      },
+      select: {
+        username: true,
+        post: true,
+        following: true
       }
     });
   }
@@ -59,8 +71,77 @@ export class UsersService {
     return await this.prisma.users.findUnique({ 
       where: { 
         username: req["user"].username 
+      },
+      select: {
+        username: true,
+        post: true,
+        following: {
+          select: {
+            username: true,
+          }
+        },
+        followers: {
+          select: {
+            username: true,
+          }
+        }
       }
     });
   }
 
+  async addFollow(req: Request, username: string) {
+    await this.prisma.users.update({
+      where: { username },
+      data: {
+        followers: {
+          connect: { username: req['user'].username }
+        }
+      }
+    });
+
+    return this.prisma.users.update({
+      where: { username: req['user'].username },
+      data: {
+        following: {
+          connect: { username: username }
+        }
+      },
+      select: {
+        username: true,
+        following: {
+          select: {
+            username: true
+          }
+        }
+      }
+    });
+  }
+
+  async removeFollow(req: Request, username: string) {
+    await this.prisma.users.update({
+      where: { username },
+      data: {
+        followers: {
+          disconnect: { username: req['user'].username }
+        }
+      }
+    });
+
+    return this.prisma.users.update({
+      where: { username: req['user'].username },
+      data: {
+        following: {
+          disconnect: { username: username }
+        }
+      },
+      select: {
+        username: true,
+        following: {
+          select: {
+            username: true,
+          }
+        }
+      }
+    });
+  }
 }
