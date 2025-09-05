@@ -13,10 +13,37 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model users {
-  id                      Int             @id @default(autoincrement())
-  username                String          @unique
-  password                String
-  email                   String
-  accountCreationDate     DateTime        @default(now())
+model Users {
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  password      String
+  email         String
+  createdAt     DateTime  @default(now())
+  post          Posts[]
+  likes         Likes[]
+
+
+  following     Users[]   @relation("following")
+  symmetricFollowing Users[]  @relation("following")
+
+
+  followers     Users[]   @relation("followers")
+  symmetricFollowers Users[]  @relation("followers")
+}
+
+model Posts {
+  id            Int       @id @default(autoincrement())
+  message       String
+  userId        Int
+  user          Users     @relation(fields: [userId], references: [id])
+  totalLikes    Int
+  likes         Likes[]
+}
+
+model Likes {
+  postId        Int
+  post          Posts     @relation(fields: [postId], references: [id])
+  userId        Int
+  user          Users     @relation(fields: [userId], references: [id])
+  @@id([postId, userId])
 }
