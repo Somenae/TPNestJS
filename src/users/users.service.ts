@@ -32,15 +32,27 @@ export class UsersService {
   }
 
   async findAll() {
-    return await this.prisma.users.findMany();
+    return await this.prisma.users.findMany({
+      select: {
+        username: true,
+        post: {
+          select: {
+            message: true,
+            totalLikes: true,
+            createdAt: true,
+          }
+        }
+      }
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  update(req: Request, updateUserDto: UpdateUserDto) {
+    return this.prisma.users.update({
+      where: {
+        username: req['user'].username
+      },
+      data: updateUserDto
+    })
   }
 
   async findByUsername(username: string) {
@@ -168,3 +180,25 @@ export class UsersService {
     })
   }
 }
+
+
+
+/* const deleteTagAndChildren = async (parentId) => {
+  const prisma = new PrismaClient()
+
+  // Start a transaction
+  const deletedRecords = await prisma.$transaction([
+    prisma.tag.deleteMany({
+      where: {
+        parentId: parentId,
+      },
+    }),
+    prisma.tag.delete({
+      where: {
+        id: parentId,
+      },
+    }),
+  ])
+
+  return deletedRecords
+} */
